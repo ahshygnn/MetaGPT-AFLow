@@ -81,24 +81,34 @@ def parse_args():
         default=True,
         help="Whether to download dataset for the first time",
     )
+    parser.add_argument(
+        "--opt_model_name",
+        type=str,
+        default="claude-3-5-sonnet-20240620",
+        help="Specifies the name of the model used for optimization tasks.",
+    )
+    parser.add_argument(
+        "--exec_model_name",
+        type=str,
+        default="gpt-4o-mini",
+        help="Specifies the name of the model used for execution tasks.",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
 
-    download(["datasets", "initial_rounds"], if_first_download=args.if_first_optimize)
     config = EXPERIMENT_CONFIGS[args.dataset]
 
-    four_o_llm_config = ModelsConfig.default().get("gpt-4o")
     mini_llm_config = ModelsConfig.default().get("gpt-4o-mini")
     claude_llm_config = ModelsConfig.default().get("claude-3-5-sonnet-20240620")
 
     optimizer = Optimizer(
         dataset=config.dataset,
         question_type=config.question_type,
-        opt_llm_config=claude_llm_config,
-        exec_llm_config=mini_llm_config,
+        opt_llm_config=opt_llm_config,
+        exec_llm_config=exec_llm_config,
         check_convergence=args.check_convergence,
         operators=config.operators,
         optimized_path=args.optimized_path,
